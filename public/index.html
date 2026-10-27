@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Offline Sync Demo</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <!-- Login / unlock overlay (the same dialog serves first login, refresh-unlock and 401 re-auth) -->
+  <dialog id="auth">
+    <form id="auth-form" method="dialog">
+      <h2 id="auth-title">Sign in</h2>
+      <p id="auth-hint" class="muted"></p>
+      <label id="auth-user-row">Username <input id="auth-user" value="demo" autocomplete="username"></label>
+      <label>Password <input id="auth-pass" type="password" value="demo" autocomplete="current-password"></label>
+      <p id="auth-error" class="error" hidden></p>
+      <button id="auth-submit" class="primary">Continue</button>
+    </form>
+  </dialog>
+
+  <header>
+    <h1>Offline Sync Demo</h1>
+    <div class="status">
+      <span id="chip-net" class="chip"></span>
+      <span id="chip-queue" class="chip"></span>
+      <span id="chip-cache" class="chip" hidden>offline data</span>
+      <span id="chip-storage" class="chip" hidden></span>
+      <label class="switch" title="Behaves exactly like airplane mode for every request the app makes">
+        <input id="sim-offline" type="checkbox"> Simulate offline
+      </label>
+      <button id="logout">Log out</button>
+    </div>
+  </header>
+
+  <p id="banner" class="banner" hidden></p>
+
+  <main>
+    <section class="panel">
+      <h2>Client <small>(what the user sees)</small></h2>
+      <form id="add-form">
+        <input id="add-title" placeholder="Add a task…  (type !reject to see a permanent rejection)" autocomplete="off" required>
+        <button class="primary">Add</button>
+      </form>
+      <ul id="tasks" class="tasks"></ul>
+
+      <div id="failed-box" hidden>
+        <h3>Needs your attention</h3>
+        <ul id="failed" class="tasks"></ul>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Server <small>(ground truth, bypasses the simulated outage)</small></h2>
+      <div class="chaos">
+        <strong>Break it on purpose</strong>
+        <button data-chaos='{"failNext":1}'>Fail next write (503)</button>
+        <button data-chaos='{"dropResponseNext":1}'>Commit, then drop response</button>
+        <button data-chaos='{"expireSessions":true}'>Expire sessions (401)</button>
+        <label>Latency <select id="latency"><option value="0">0 ms</option><option value="1500">1.5 s</option><option value="25000">25 s (timeout)</option></select></label>
+      </div>
+      <h3>Tasks on server</h3>
+      <ul id="server-tasks" class="tasks small"></ul>
+      <button id="edit-elsewhere">Edit first task "elsewhere" (forces a 412 on queued renames)</button>
+      <h3>Idempotency records</h3>
+      <ul id="idem" class="mono"></ul>
+      <h3>Request log</h3>
+      <pre id="log" class="mono"></pre>
+    </section>
+
+    <section class="panel wide">
+      <h2>Sync engine events</h2>
+      <pre id="events" class="mono"></pre>
+    </section>
+  </main>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

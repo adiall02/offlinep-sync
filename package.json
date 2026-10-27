@@ -1,0 +1,13 @@
+{
+  "name": "offline-sync-demo",
+  "version": "1.0.0",
+  "description": "Dependency-free reference implementation of an offline-first sync pattern: encrypted outbox, idempotent replay, read cache.",
+  "type": "module",
+  "private": true,
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "node --test \"test/*.test.js\""
+  },
+  "license": "MIT"
+}
